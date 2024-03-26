@@ -1,12 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const todoRoutes = require('./routes/todoRoutes');
 
 const app = express();
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Routes
 app.use('/api/todos', todoRoutes);

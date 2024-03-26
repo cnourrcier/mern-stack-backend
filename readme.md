@@ -19,7 +19,7 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - Express.js: A backend framework for Node.js used to create RESTful API endpoints.
 - Node.js: A JavaScript runtime environment used to run the server-side code.
 - Mongoose: An Object Data Modeling (ODM) library for MongoDB and Node.js used for schema-based modeling and validation.
-- Body-parser: A middleware for Express.js used to parse incoming request bodies.
+- Express-validator: A library for validating and sanitizing user input in Express.js applications.
 
 ## Project Structure
 
@@ -65,11 +65,19 @@ npm run dev
 - **POST /api/todos**: Create a new todo.
 - **DELETE /api/todos/:id**: Delete a todo by ID.
 
+## Validation and Sanitation
+
+Validation and sanitation middleware have been added to ensure that incoming data is properly validated and sanitized before processing. The validation rules include checks for required fields, data types, and maximum lengths, while sanitation methods help prevent security vulnerabilities by removing potentially malicious input. 
+
+Validation and sanitation middleware functions:
+
+- **`validateCreateTodo`**: Validates input data for creating a new todo.
+- **`validateUpdateTodo`**: Validates input data for updating an existing todo. 
+
 ## Next Steps
 
 To further expand and enhance the functionality of this project, consider implementing the following features:
 
-- Input validation.
 - User authentication and authorization.
 - Improved error handling and logging.
 - Sorting, filtering, and pagination of todo data.
