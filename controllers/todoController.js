@@ -1,64 +1,72 @@
 const Todo = require('../models/todoModel');
+const asyncErrorHandler = require('../utils/asyncErrorHandler');
+const CustomError = require('../utils/customError');
 
-exports.getAllTodos = async (req, res) => {
-    try {
-        const todos = await Todo.find();
-        res.json(todos);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
-
-exports.getTodoById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const todo = await Todo.findById(id);
-        if (!todo) return res.status(404).json({ message: 'Todo not found' });
-        res.json(todo);
-    } catch (err) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-exports.createTodo = async (req, res) => {
-    const todo = new Todo({
-        title: req.body.title,
-        description: req.body.description,
-        completed: req.body.completed || false
+exports.getAllTodos = asyncErrorHandler(async (req, res, next) => {
+    
+    const todos = await Todo.find();
+    res.status(200).json({
+        status: 'success',
+        data: {
+            todos
+        }
     });
-    console.log(todo);
-    try {
-        const newTodo = await todo.save();
-        res.status(201).json(newTodo);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
+});
 
-exports.updateTodo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const todo = await Todo.findById(id);
-        if (!todo) return res.status(404).json({ message: 'Todo not found' });
-        todo.title = req.body.title || todo.title;
-        todo.description = req.body.description || todo.description;
-        todo.completed = req.body.completed || todo.completed;
-        const updatedTodo = await todo.save();
-        res.json(updatedTodo);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+exports.getTodoById = asyncErrorHandler(async (req, res, next) => {
+    const todo = await Todo.findById(req.params.id);
+    if (!todo) {
+        const error = new CustomError('Todo with that ID is not found', 404);
+        // next sends the error to the global error handling middleware (GEHM)
+        // return so that the rest of the code below 'next(error)' does not run after calling the GEHM
+        return next(error);
     }
-};
+    res.status(200).json({
+        status: 'success',
+        data: {
+            todo
+        }
+    })
+});
 
-exports.deleteTodo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const todo = await Todo.findById(id);
-        if (!todo) return res.status(404).json({ message: 'Todo not found' });
-        await todo.deleteOne(todo);
-        res.json({ message: 'Todo deleted' })
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+exports.createTodo = asyncErrorHandler(async (req, res, next) => {
+    const newTodo = await Todo.create(req.body);
+    res.status(201).json({
+        status: 'success',
+        data: {
+            newTodo
+        }
+    });
+});
+
+exports.updateTodo = asyncErrorHandler(async (req, res, next) => {
+    const todo = await Todo.findById(req.params.id);
+    if (!todo) {
+        const error = new CustomError('Todo with that ID is not found', 404);
+        return next(error);
     }
+    todo.title = req.body.title || todo.title;
+    todo.description = req.body.description || todo.description;
+    todo.completed = req.body.completed || todo.completed;
+    const updatedTodo = await todo.save();
+    res.status(200).json({
+        status: 'success',
+        data: {
+            updatedTodo
+        }
+    });
+});
+
+exports.deleteTodo = async (req, res, next) => {
+    // will return a deleted todo object if successfully deleted. If ID is not found, will return null.
+    const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+    if (!deletedTodo) {
+        const error = new CustomError('Todo with that ID is not found', 404);
+        return next(error);
+    }
+    res.status(204).json({
+        status: 'success',
+        data: null
+    });
 }
 

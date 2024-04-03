@@ -4,7 +4,9 @@ const todoSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        unique: true,
         maxLength: 60, // Max length constraint
+        minLength: 1,
         trim: true // Trim leading/trailing whitespace
     },
     description: {
@@ -30,3 +32,4 @@ const todoSchema = new mongoose.Schema({
 const Todo = mongoose.model('Todo', todoSchema);
 
 module.exports = Todo;
+
