@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const todoController = require('../controllers/todoController');
-const { validateCreateTodo, validateUpdateTodo } = require('../middleware/todoValidation');
 
 // Routes
 router.route('/')

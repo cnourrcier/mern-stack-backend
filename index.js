@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const todoRoutes = require('./routes/todoRoutes');
 const CustomError = require('./utils/customError');
 const globalErrorHandler = require('./controllers/errorController');
+const { reqLogger } = require('./utils/eventLogger');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -14,6 +15,8 @@ process.on('uncaughtException', (err) => {
 })
 
 const app = express();
+
+app.use(reqLogger);
 
 // Middleware
 app.use(express.json());

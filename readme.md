@@ -9,6 +9,7 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
+- [Logging](#logging)
 - [Next Steps](#next-steps)
 - [Contributing](#contributing)
 - [License](#license)
@@ -19,6 +20,9 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - Express.js: A backend framework for Node.js used to create RESTful API endpoints.
 - Node.js: A JavaScript runtime environment used to run the server-side code.
 - Mongoose: An Object Data Modeling (ODM) library for MongoDB and Node.js used for schema-based modeling and validation.
+- uuid: A library used to generate universally unique identifiers (UUIDs).
+- date-fns: A library for date and time manipulation in JavaScript.
+- dotenv: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
 
 ## Project Structure
 
@@ -62,7 +66,22 @@ npm run dev
 - **GET /api/todos**: Retrieve all todos.
 - **GET /api/todos/:id**: Retrieve a todo by ID.
 - **POST /api/todos**: Create a new todo.
-- **DELETE /api/todos/:id**: Delete a todo by ID. 
+- **DELETE /api/todos/:id**: Delete a todo by ID.
+
+## Logging
+
+The application now includes basic logging functionality using a combination of custom logging methods and external libraries. Every event and error that occurs in the application is logged to provide visibility into the system's behavior and aid in debugging, troubleshooting, and monitoring. The following information is logged: 
+
+Request Log:
+- API request method
+- Origin request header
+- API request URL
+- Date and time of request
+
+Error Log: 
+- Error status code
+- Error message
+- Date and time of error
  
 ## Next Steps
 
@@ -70,7 +89,6 @@ To further expand and enhance the functionality of this project, consider implem
 
 - Sanitation methods.
 - User authentication and authorization.
-- Improved error handling and logging.
 - Sorting, filtering, and pagination of todo data.
 - Optimizing database quieries for better performance.
 - Implementing caching mechanisms to reduce database load.

@@ -1,4 +1,5 @@
 const CustomError = require('../utils/customError');
+const { eventLogger } = require('../utils/eventLogger');
 
 const devErrors = (res, err) => {
     res.status(err.statusCode).json({
@@ -45,6 +46,7 @@ const prodErrors = (res, err) => {
 module.exports = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
+    eventLogger(`${err.statusCode}: ${err.message}`, 'errLog.txt');
     if (process.env.NODE_ENV === 'development') {
         devErrors(res, err);
     } else if (process.env.NODE_ENV === 'production') {
