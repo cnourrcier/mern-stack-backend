@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const todoRoutes = require('./routes/todoRoutes');
-const CustomError = require('./utils/customError');
+const CustomError = require('./utils/CustomError');
 const globalErrorHandler = require('./controllers/errorController');
 const { reqLogger } = require('./utils/eventLogger');
 const dotenv = require('dotenv');

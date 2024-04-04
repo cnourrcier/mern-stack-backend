@@ -1,12 +1,26 @@
 const Todo = require('../models/todoModel');
 const asyncErrorHandler = require('../utils/asyncErrorHandler');
-const CustomError = require('../utils/customError');
+const CustomError = require('../utils/CustomError');
+const ApiFeatures = require('../utils/ApiFeatures');
+
+
+exports.getHighestRated = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = 'priority';
+    next();
+}
 
 exports.getAllTodos = asyncErrorHandler(async (req, res, next) => {
-    
-    const todos = await Todo.find();
+    const features = new ApiFeatures(Todo.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+    const todos = await features.query;
+
     res.status(200).json({
         status: 'success',
+        length: todos.length,
         data: {
             todos
         }
@@ -47,6 +61,7 @@ exports.updateTodo = asyncErrorHandler(async (req, res, next) => {
     }
     todo.title = req.body.title || todo.title;
     todo.description = req.body.description || todo.description;
+    todo.priority = req.body.priority || todo.priority;
     todo.completed = req.body.completed || todo.completed;
     const updatedTodo = await todo.save();
     res.status(200).json({

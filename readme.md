@@ -63,6 +63,7 @@ npm run dev
 2. Use tools like Postman, Hoppscotch.io, or Thunder Client to test the API endpoints (see [API Endpoints](#api-endpoints) section below).
 
 ## API Endpoints
+- **GET /api/todos/highest-priorities**: Retrieve 5 highest priority todos.
 - **GET /api/todos**: Retrieve all todos.
 - **GET /api/todos/:id**: Retrieve a todo by ID.
 - **POST /api/todos**: Create a new todo.
@@ -70,7 +71,7 @@ npm run dev
 
 ## Logging
 
-The application now includes basic logging functionality using a combination of custom logging methods and external libraries. Every event and error that occurs in the application is logged to provide visibility into the system's behavior and aid in debugging, troubleshooting, and monitoring. The following information is logged: 
+The application includes basic logging functionality using a combination of custom logging methods and external libraries. Every event and error that occurs in the application is logged to provide visibility into the system's behavior and aid in debugging, troubleshooting, and monitoring. The following information is logged: 
 
 Request Log:
 - API request method
@@ -89,11 +90,9 @@ To further expand and enhance the functionality of this project, consider implem
 
 - Sanitation methods.
 - User authentication and authorization.
-- Sorting, filtering, and pagination of todo data.
 - Optimizing database quieries for better performance.
 - Implementing caching mechanisms to reduce database load.
 - Writing unit tests.
-- Documenting API endpoints.
 
 ## License
 

@@ -14,6 +14,14 @@ const todoSchema = new mongoose.Schema({
         maxLength: 200, // Max length constraint
         trim: true // Trim leading/trailing whitespace
     },
+    priority: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 3,
+        default: 1,
+        trim: true
+    },
     createdAt: {
         type: Date,
         default: function () {

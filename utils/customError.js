@@ -11,5 +11,3 @@ class CustomError extends Error {
 }
 
 module.exports = CustomError;
-
-// const error = new CustomError('some error message', 404)
