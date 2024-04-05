@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const todoRoutes = require('./routes/todoRoutes');
+const userRoutes = require('./routes/userRoutes');
 const CustomError = require('./utils/CustomError');
 const globalErrorHandler = require('./controllers/errorController');
 const { reqLogger } = require('./utils/eventLogger');
@@ -26,6 +27,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/todos', todoRoutes);
+app.use('/api/users', userRoutes);
 
 app.all('*', (req, res, next) => {
     const error = new CustomError(`Can't find ${req.originalUrl} on the server!`, 404);
