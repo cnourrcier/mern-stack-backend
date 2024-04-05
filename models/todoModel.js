@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 const todoSchema = new mongoose.Schema({
     title: {
@@ -22,6 +24,7 @@ const todoSchema = new mongoose.Schema({
         default: 1,
         trim: true
     },
+    createdBy: String,
     createdAt: {
         type: Date,
         default: function () {
@@ -36,6 +39,29 @@ const todoSchema = new mongoose.Schema({
         default: false
     }
 });
+
+// DOCUMENT MIDDLEWARE
+
+// pre save hook
+// executed before the document is saved in db
+// .save() or .create()
+todoSchema.pre('save', function (next) {
+    // 'this' is pointing to the document that is currently being processed.
+    this.createdBy = 'CHARLIE'; // hardcoded for now
+    next();
+})
+
+// post save hook
+// does not have access to 'this'
+todoSchema.post('save', function (doc, next) {
+    const message = `A new priority has been created by ${doc.createdBy}: ${doc.title}\n`
+    fs.writeFileSync(path.join(__dirname, '..', 'logs', 'dataLog.txt'), message, { flag: 'a' }, (err) => {
+        console.log(err.message);
+    });
+    next();
+})
+
+
 
 const Todo = mongoose.model('Todo', todoSchema);
 
