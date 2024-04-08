@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 // name, email, password, confirmPassword, photo
 const userSchema = new mongoose.Schema({
@@ -24,8 +25,24 @@ const userSchema = new mongoose.Schema({
     },
     confirmPassword: {
         type: String,
-        required: [true, 'Please confirm your password.']
+        required: [true, 'Please confirm your password.'],
+        validate: {
+            validator: function (val) {
+                return val === this.password;
+            },
+            message: 'Password & Confirm Password does not match!'
+        }
     }
+})
+
+// mongoose pre middleware. If password has been modified: encrypt and save. Else: next().
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    // encrypt the password before saving it
+    this.password = await bcrypt.hash(this.password, 12);
+    this.confirmPassword = undefined;
+    next();
 })
 
 const User = mongoose.model('User', userSchema);

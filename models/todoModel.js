@@ -51,12 +51,14 @@ todoSchema.pre('save', function (next) {
     next();
 })
 
+// **NOTE: need to update this because it logs the PUT reqs also. This is due to the runValidators option.
 // post save hook
 // does not have access to 'this'
 todoSchema.post('save', function (doc, next) {
-    const message = `A new priority has been created by ${doc.createdBy}: ${doc.title}\n`
+    const message = `${doc.title}: created by ${doc.createdBy} | ${doc.createdAt}\n`
     fs.writeFileSync(path.join(__dirname, '..', 'logs', 'dataLog.txt'), message, { flag: 'a' }, (err) => {
-        console.log(err.message);
+        const error = new CustomError(err.message, err.statusCode);
+        return next(error);
     });
     next();
 })

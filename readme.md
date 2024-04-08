@@ -23,6 +23,7 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - uuid: A library used to generate universally unique identifiers (UUIDs).
 - date-fns: A library for date and time manipulation in JavaScript.
 - dotenv: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+- bcrypt: A library for hashing passwords. 
 
 ## Project Structure
 
@@ -63,11 +64,19 @@ npm run dev
 2. Use tools like Postman, Hoppscotch.io, or Thunder Client to test the API endpoints (see [API Endpoints](#api-endpoints) section below).
 
 ## API Endpoints
+
+### Todos
 - **GET /api/todos/highest-priorities**: Retrieve 5 highest priority todos.
 - **GET /api/todos**: Retrieve all todos.
 - **GET /api/todos/:id**: Retrieve a todo by ID.
 - **POST /api/todos**: Create a new todo.
 - **DELETE /api/todos/:id**: Delete a todo by ID.
+
+### Users
+- **GET /api/users**: Retrieve all users.
+- **GET /api/users/:id**: Retrieve a user by ID.
+- **POST /api/todos/signup**: Create a new user.
+- **DELETE /api/todos/:id**: Delete a user by ID.
 
 ## Logging
 
@@ -83,6 +92,10 @@ Error Log:
 - Error status code
 - Error message
 - Date and time of error
+
+Data Log:
+- Title of newly created todo
+- Name of registered user who created the todo
  
 ## Next Steps
 
