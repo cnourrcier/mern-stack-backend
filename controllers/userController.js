@@ -4,6 +4,14 @@ const CustomError = require('../utils/CustomError');
 const ApiFeatures = require('../utils/ApiFeatures');
 const jwt = require('jsonwebtoken');
 
+const signToken = (id) => {
+    // create a jwt: pass the payload and secret string to the sign function.
+    // header will be automatically created by the sign function.
+    // The more properties passed in the payload, the more secure the token will be.
+    return jwt.sign({ id: id }, process.env.SECRET_STR, {
+        expiresIn: process.env.LOGIN_EXPIRES
+    })
+}
 
 exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
     const features = new ApiFeatures(User.find(), req.query)
@@ -22,6 +30,40 @@ exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
+exports.createUser = asyncErrorHandler(async (req, res, next) => {
+    const newUser = await User.create(req.body);
+    const token = signToken(newUser._id);
+    res.status(201).json({
+        status: 'success',
+        token: token,
+        data: {
+            user: newUser
+        }
+    });
+});
+
+exports.loginUser = asyncErrorHandler(async (req, res, next) => {
+    // Check if email & password are present in req body.
+    const { email, password } = req.body;
+    if (!email || !password) {
+        const error = new CustomError('Please provide email ID and Password for login!', 400); // unauthorized
+        return next(error);
+    }
+    // Check if user exists with given email.
+    const user = await User.findOne({ email: email }).select('+password'); //select function to include password.
+    // Check if user exists first, and if so then check if passwords match.
+    if (!user || !(await user.comparePasswordInDb(password, user.password))) {
+        const error = new CustomError('Incorrect email or password.', 400); // unauthorized
+        return next(error);
+    }
+    const token = signToken(user._id);
+
+    res.status(200).json({
+        status: 'success',
+        token: token
+    })
+});
+
 exports.getUserById = asyncErrorHandler(async (req, res, next) => {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -36,23 +78,6 @@ exports.getUserById = asyncErrorHandler(async (req, res, next) => {
             user
         }
     })
-});
-
-exports.createUser = asyncErrorHandler(async (req, res, next) => {
-    const newUser = await User.create(req.body);
-    // create a jwt: pass the payload and secret string to the sign function.
-    // header will be automatically created by the sign function.
-    // The more properties passed in the payload, the more secure the token will be.
-    const token = jwt.sign({ id: newUser._id }, process.env.SECRET_STR, {
-        expiresIn: process.env.LOGIN_EXPIRES
-    })
-    res.status(201).json({
-        status: 'success',
-        token: token,
-        data: {
-            user: newUser
-        }
-    });
 });
 
 exports.updateUser = asyncErrorHandler(async (req, res, next) => {
@@ -81,4 +106,5 @@ exports.deleteUser = async (req, res, next) => {
         data: null
     });
 }
+
 

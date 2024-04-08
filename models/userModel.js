@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Please enter a password.'],
-        minLength: 8
+        minLength: 8,
+        select: false // hide password.
     },
     confirmPassword: {
         type: String,
@@ -44,6 +45,12 @@ userSchema.pre('save', async function (next) {
     this.confirmPassword = undefined;
     next();
 })
+
+// Instance method for all instances of User model.
+userSchema.methods.comparePasswordInDb = async function (pwd, pwdDb) {
+    //Check if submitted password matches db password.
+    return await bcrypt.compare(pwd, pwdDb);
+}
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
