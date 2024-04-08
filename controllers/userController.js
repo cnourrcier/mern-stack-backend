@@ -3,6 +3,7 @@ const asyncErrorHandler = require('../utils/asyncErrorHandler');
 const CustomError = require('../utils/CustomError');
 const ApiFeatures = require('../utils/ApiFeatures');
 const jwt = require('jsonwebtoken');
+const util = require('util');
 
 const signToken = (id) => {
     // create a jwt: pass the payload and secret string to the sign function.
@@ -106,5 +107,31 @@ exports.deleteUser = async (req, res, next) => {
         data: null
     });
 }
+
+exports.protect = asyncErrorHandler(async (req, res, next) => {
+    // 1. Read the token and check if it exists.
+    const testToken = req.headers.authorization;
+    let token;
+    if (testToken && testToken.startsWith('bearer')) {
+        token = testToken.split(' ')[1];
+    }
+    if (!token) {
+        next(new CustomError('You are not logged in!', 401)); // Unauthorized.
+    }
+    // 2. Validate the token.
+    // Async function, but does not return a promise. 
+    // Need to promisify it so that it returns a promise.
+    const decodedToken = await util.promisify(jwt.verify)(token, process.env.SECRET_STR);
+    // 3. Check if the user exists in the database.
+
+    // 4. Check if the user changed password after the token was issued.
+
+    // 5. Allow user to access route.
+    next();
+})
+
+
+
+
 
 

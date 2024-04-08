@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const todoController = require('../controllers/todoController');
+const userController = require('../controllers/userController');
 
 // Routes
 router.route('/highest-priorities')
     .get(todoController.getHighestRated, todoController.getAllTodos)
 
 router.route('/')
-    .get(todoController.getAllTodos)
+    .get(userController.protect, todoController.getAllTodos)
     .post(todoController.createTodo)
 
 router.route('/:id')

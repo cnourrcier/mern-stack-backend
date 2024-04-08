@@ -24,6 +24,8 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - date-fns: A library for date and time manipulation in JavaScript.
 - dotenv: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
 - bcrypt: A library for hashing passwords. 
+- jsonwebtoken: A library used for secure authentication and data transmission between client and server.
+- validator: A library of string validators and sanitizers.
 
 ## Project Structure
 

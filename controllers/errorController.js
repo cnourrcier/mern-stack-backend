@@ -29,6 +29,15 @@ const validationErrorHandler = (err) => {
     return new CustomError(msg, 400);
 }
 
+const handleExpiredJWT = (err) => {
+    return new CustomError('JWT has expired. Please login again!', 401) // Unauthorized 
+}
+
+const handleJWTError = (err) => {
+    return new CustomError('Invalid token. Please login again!', 401) // Unauthorized 
+
+}
+
 const prodErrors = (res, err) => {
     if (err.isOperational) {
         res.status(err.statusCode).json({
@@ -53,6 +62,8 @@ module.exports = (err, req, res, next) => {
         if (err.name === 'CastError') err = castErrorHandler(err);
         if (err.code === 11000) err = duplicateKeyErrorHandler(err);
         if (err.name === 'ValidationError') err = validationErrorHandler(err);
+        if (err.name === 'TokenExpiredError') err = handleExpiredJWT(err);
+        if (err.name === 'JsonWebTokenError') err = handleJWTError(err);
         prodErrors(res, err);
     }
 }
