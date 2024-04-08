@@ -70,12 +70,15 @@ npm run dev
 - **GET /api/todos**: Retrieve all todos.
 - **GET /api/todos/:id**: Retrieve a todo by ID.
 - **POST /api/todos**: Create a new todo.
+- **PUT /api/todos/:id**: Update a todo.
 - **DELETE /api/todos/:id**: Delete a todo by ID.
 
 ### Users
 - **GET /api/users**: Retrieve all users.
 - **GET /api/users/:id**: Retrieve a user by ID.
 - **POST /api/todos/signup**: Create a new user.
+- **POST /api/todos/login**: Login a registered user.
+- **PUT /api/todos/:id**: Update a registered user.
 - **DELETE /api/todos/:id**: Delete a user by ID.
 
 ## Logging
@@ -83,17 +86,18 @@ npm run dev
 The application includes basic logging functionality using a combination of custom logging methods and external libraries. Every event and error that occurs in the application is logged to provide visibility into the system's behavior and aid in debugging, troubleshooting, and monitoring. The following information is logged: 
 
 Request Log:
+- Date and time of request
 - API request method
 - Origin request header
 - API request URL
-- Date and time of request
 
 Error Log: 
+- Date and time of error
 - Error status code
 - Error message
-- Date and time of error
 
-Data Log:
+New Todo Log:
+- Date and time of request
 - Title of newly created todo
 - Name of registered user who created the todo
  
