@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const asyncErrorHandler = require('../utils/asyncErrorHandler');
 const CustomError = require('../utils/CustomError');
 const ApiFeatures = require('../utils/ApiFeatures');
+const jwt = require('jsonwebtoken');
 
 
 exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
@@ -39,10 +40,17 @@ exports.getUserById = asyncErrorHandler(async (req, res, next) => {
 
 exports.createUser = asyncErrorHandler(async (req, res, next) => {
     const newUser = await User.create(req.body);
+    // create a jwt: pass the payload and secret string to the sign function.
+    // header will be automatically created by the sign function.
+    // The more properties passed in the payload, the more secure the token will be.
+    const token = jwt.sign({ id: newUser._id }, process.env.SECRET_STR, {
+        expiresIn: process.env.LOGIN_EXPIRES
+    })
     res.status(201).json({
         status: 'success',
+        token: token,
         data: {
-            newUser
+            user: newUser
         }
     });
 });

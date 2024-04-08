@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+const { eventLogger } = require('../utils/eventLogger');
+
 
 const todoSchema = new mongoose.Schema({
     title: {
@@ -51,15 +53,11 @@ todoSchema.pre('save', function (next) {
     next();
 })
 
-// **NOTE: need to update this because it logs the PUT reqs also. This is due to the runValidators option.
 // post save hook
 // does not have access to 'this'
 todoSchema.post('save', function (doc, next) {
-    const message = `${doc.title}: created by ${doc.createdBy} | ${doc.createdAt}\n`
-    fs.writeFileSync(path.join(__dirname, '..', 'logs', 'dataLog.txt'), message, { flag: 'a' }, (err) => {
-        const error = new CustomError(err.message, err.statusCode);
-        return next(error);
-    });
+    const message = `${doc.title}\tcreated by: ${doc.createdBy} | ${doc.createdAt}\n`
+    eventLogger(message, 'newTodoLog.txt')
     next();
 })
 

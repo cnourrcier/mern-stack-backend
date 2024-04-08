@@ -54,16 +54,6 @@ exports.createTodo = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.updateTodo = asyncErrorHandler(async (req, res, next) => {
-    // const todo = await Todo.findById(req.params.id);
-    // if (!todo) {
-    //     const error = new CustomError('Todo with that ID is not found', 404);
-    //     return next(error);
-    // }
-    // todo.title = req.body.title || todo.title;
-    // todo.description = req.body.description || todo.description;
-    // todo.priority = req.body.priority || todo.priority;
-    // todo.completed = req.body.completed || todo.completed;
-    // const updatedTodo = await todo.save();
     const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
     if (!updatedTodo) {
         const error = new CustomError('Todo with that ID is not found', 404);

@@ -7,8 +7,6 @@ class ApiFeatures {
     filter() {
         // create shallow copy of this.queryStr
         const queryCopy = { ...this.queryStr };
-        console.log(this.queryStr);
-        console.log(queryCopy);
         // remove fields from the query
         const removeFields = ['sort', 'fields', 'limit', 'page'];
         removeFields.forEach(el => delete queryCopy[el]);
