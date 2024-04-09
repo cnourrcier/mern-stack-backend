@@ -12,7 +12,7 @@ router.route('/')
     .post(todoController.createTodo)
 
 router.route('/:id')
-    .get(todoController.getTodoById)
+    .get(userController.protect, todoController.getTodoById)
     .put(todoController.updateTodo)
     .delete(todoController.deleteTodo)
 

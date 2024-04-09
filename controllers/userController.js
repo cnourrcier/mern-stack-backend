@@ -123,10 +123,17 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     // Need to promisify it so that it returns a promise.
     const decodedToken = await util.promisify(jwt.verify)(token, process.env.SECRET_STR);
     // 3. Check if the user exists in the database.
-
+    const user = await User.findById(decodedToken.id);
+    if (!user) {
+        next(new CustomError('The user with the given token does not exist.', 401)) // Unauthorized
+    }
     // 4. Check if the user changed password after the token was issued.
-
+    const isPasswordChanged = await user.isPasswordChanged(decodedToken.iat);
+    if (isPasswordChanged) {
+        return next(new CustomError('The password has been changed. Please login again.', 401))
+    }
     // 5. Allow user to access route.
+    req.user = user;
     next();
 })
 
