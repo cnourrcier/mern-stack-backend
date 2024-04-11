@@ -41,7 +41,7 @@ The project follows a standard MVC (Model-View-Controller) pattern for organizin
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/mern-stack-backend.git
+git clone https://github.com/cnourrcier/mern-stack-backend.git
 ```
 
 2. Install dependencies:
