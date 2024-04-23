@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
             validator: function (val) {
                 return val === this.password;
             },
-            message: 'Password & Confirm Password does not match!'
+            message: 'Password & Confirm Password do not match!'
         }
     },
     passwordChangedAt: Date,

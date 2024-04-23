@@ -16,6 +16,17 @@ const signToken = (id) => {
     })
 }
 
+const createSendResponse = (user, statusCode, res) => {
+    const token = signToken(user._id);
+    res.status(statusCode).json({
+        status: 'success',
+        token,
+        data: {
+            user
+        }
+    });
+}
+
 exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
     const features = new ApiFeatures(User.find(), req.query)
         .filter()
@@ -35,14 +46,7 @@ exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
 
 exports.createUser = asyncErrorHandler(async (req, res, next) => {
     const newUser = await User.create(req.body);
-    const token = signToken(newUser._id);
-    res.status(201).json({
-        status: 'success',
-        token: token,
-        data: {
-            user: newUser
-        }
-    });
+    createSendResponse(newUser, 201, res);
 });
 
 exports.loginUser = asyncErrorHandler(async (req, res, next) => {
@@ -59,11 +63,7 @@ exports.loginUser = asyncErrorHandler(async (req, res, next) => {
         const error = new CustomError('Incorrect email or password.', 400); // unauthorized
         return next(error);
     }
-    const token = signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        token: token
-    })
+    createSendResponse(user, 200, res);
 });
 
 exports.getUserById = asyncErrorHandler(async (req, res, next) => {
@@ -208,12 +208,22 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
     user.passwordChangedAt = Date.now();
     await user.save();
     // 3. LOGIN THE USER
-    const loginToken = signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        token: loginToken
-    })
+    createSendResponse(user, 200, res);
 });
 
+exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
+    // 1. GET CURRENT USER DATA FROM DATABASE
+    const user = await User.findById(req.user._id).select('+password'); // we get req.user from protect middleware that runs before this function.
+    // 2. CHECK IF THE SUPPLIED CURRENT PASSWORD IS CORRECT
+    if (!(await user.comparePasswordInDb(req.body.currentPassword, user.password))) {
+        return next(new CustomError('Password is incorrect.', 401)) // Bad request
+    }
+    // 3. IF SUPPLIED PASSWORD IS CORRECT, UPDATE USER PASSWORD WITH NEW VALUE
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    await user.save();
+    // 4. LOGIN USER & SEND JWT
+    createSendResponse(user, 200, res);
+});
 
 
