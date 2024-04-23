@@ -27,6 +27,16 @@ const createSendResponse = (user, statusCode, res) => {
     });
 }
 
+const filterReqObj = (obj, ...allowedFields) => {
+    const newObj = {};
+    Object.keys(obj).forEach((key) => {
+        if (allowedFields.includes(key)) {
+            newObj[key] = obj[key];
+        }
+    })
+    return newObj;
+}
+
 exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
     const features = new ApiFeatures(User.find(), req.query)
         .filter()
@@ -225,5 +235,19 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     // 4. LOGIN USER & SEND JWT
     createSendResponse(user, 200, res);
 });
+
+exports.updateMe = asyncErrorHandler(async (req, res, next) => {
+    // 1. CHECK IF REQUEST DATA CONTAINS PASSWORD OR CONFIRMPASSWORD
+    if (req.body.password || req.body.confirmPassword) {
+        return next(new CustomError('You cannot update your password using this endpoint.', 400)) // Bad request
+    }
+    // 2. UPDATE USER DETAILS
+    const filterObj = filterReqObj(req.body, 'name', 'email');
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, filterObj, { runValidators: true, new: true }) // protect middleware will be run first and will past the req.user obj.
+    res.status(200).json({
+        status: 'success',
+        message: 'Info updated successfully.'
+    })
+})
 
 
