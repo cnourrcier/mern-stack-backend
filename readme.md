@@ -1,4 +1,4 @@
-# MERN Stack Backend
+# Task Manager
 
 This project is a simple backend implementation of a RESTful API using the MERN (MongoDB, Express.js, Node.js) stack. It provides CRUD (Create, Read, Update, Delete) operations for managing todos.
 

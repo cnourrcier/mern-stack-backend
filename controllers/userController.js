@@ -112,7 +112,7 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     // 1. Read the token and check if it exists.
     const testToken = req.headers.authorization;
     let token;
-    if (testToken && testToken.startsWith('bearer')) {
+    if (testToken && testToken.startsWith('Bearer')) {
         token = testToken.split(' ')[1];
     }
     if (!token) {
@@ -137,7 +137,27 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     next();
 })
 
+exports.restrict = (role) => { // Create a wrapper function that returns a middleware function because need to pass in role.
+    return (req, res, next) => {
+        if (role !== req.user.role) { // req.user is created in the protect middleware and passed to the next middleware, aka this one. 
+            const error = new CustomError('You do not have permission to perform this action.', 403) // Forbidden
+            next(error);
+        }
+        next();
+    }
+}
 
+// This restrict middleware can be used in place of the one above when you have multiple roles that can perform restricted actions. 
+// Create a wrapper function that returns a middleware function because need to pass in role.
+// exports.restrict = (...role) => { // rest parameter: (...role) means multiple values can be passed to this parameter, and the parameter will be an array.  
+//     return (req, res, next) => {
+//         if (!role.includes(req.user.role)) { // req.user is created in the protect middleware and passed to the next middleware, aka this one. 
+//             const error = new CustomError('You do not have permission to perform this action.', 403) // Forbidden
+//             next(error);
+//         }
+//         next();
+//     }
+// }
 
 
 

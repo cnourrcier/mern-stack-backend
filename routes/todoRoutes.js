@@ -14,6 +14,6 @@ router.route('/')
 router.route('/:id')
     .get(userController.protect, todoController.getTodoById)
     .put(todoController.updateTodo)
-    .delete(todoController.deleteTodo)
+    .delete(userController.protect, userController.restrict('admin'), todoController.deleteTodo)
 
 module.exports = router;
