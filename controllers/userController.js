@@ -4,6 +4,7 @@ const CustomError = require('../utils/CustomError');
 const ApiFeatures = require('../utils/ApiFeatures');
 const jwt = require('jsonwebtoken');
 const util = require('util');
+const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
     // create a jwt: pass the payload and secret string to the sign function.
@@ -169,12 +170,29 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
     // 2. GENERATE A RANDOM RESET TOKEN
     const resetToken = user.createResetPasswordToken();
     await user.save({ validateBeforeSave: false }); // disable pre middleware for saving, bc don't need to confirm password.
-
     // 3. SEND EMAIL TO USER WITH RESET TOKEN
-
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/users/resetPassword/${resetToken}` // protocol is either http or https. req.get('host') will return the host (ex: localhost:3000)
+    const message = `We have received a password reset request. Please use the below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will only be valid for 10 minutes.`
+    // if receive a rejected promise, send to global error handler after removing values from passwordResetToken and pRTE in database.
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Password change request',
+            message: message
+        });
+        res.status(200).json({
+            status: 'success',
+            message: 'password link sent to the user email'
+        })
+    } catch (err) {
+        user.passwordResetToken = undefined;
+        user.passwordResetTokenExpires = undefined;
+        user.save({ validateBeforeSave: false });
+        return next(new CustomError('There was an error sending password reset email. Please try again later.', 500)); // Internal server error
+    }
 })
 
-exports.passwordReset = (req, res, next) => {
+exports.passwordReset = async (req, res, next) => {
 
 }
 

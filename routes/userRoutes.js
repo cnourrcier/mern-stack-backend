@@ -20,7 +20,7 @@ router.route('/:id')
 router.route('/forgotPassword')
     .post(userController.forgotPassword)
 
-// router.route('/resetPassword')
-//     .post(userController.resetPassword)
+// router.route('/resetPassword/:token')
+//     .patch(userController.resetPassword)
 
 module.exports = router;
