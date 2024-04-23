@@ -29,4 +29,7 @@ router.route('/updatePassword')
 router.route('/updateMe')
     .patch(userController.protect, userController.updateMe)
 
+router.route('/deleteMe')
+    .patch(userController.protect, userController.deleteMe)
+
 module.exports = router;

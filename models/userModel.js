@@ -40,6 +40,11 @@ const userSchema = new mongoose.Schema({
             message: 'Password & Confirm Password do not match!'
         }
     },
+    isActive: {
+        type: Boolean,
+        default: true,
+        select: false
+    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetTokenExpires: Date
@@ -52,6 +57,13 @@ userSchema.pre('save', async function (next) {
     // encrypt the password before saving it
     this.password = await bcrypt.hash(this.password, 12);
     this.confirmPassword = undefined;
+    next();
+})
+
+// use for any User query that starts with find
+userSchema.pre(/^find/, function (next) {
+    // 'this' keyword in the function will point to the current query
+    this.find({ isActive: { $ne: false } }); // display any user who's inActive != false.
     next();
 })
 
