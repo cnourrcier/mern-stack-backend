@@ -4,6 +4,7 @@ const CustomError = require('../utils/CustomError');
 const ApiFeatures = require('../utils/ApiFeatures');
 const jwt = require('jsonwebtoken');
 const util = require('util');
+const crypto = require('crypto');
 const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
@@ -59,7 +60,6 @@ exports.loginUser = asyncErrorHandler(async (req, res, next) => {
         return next(error);
     }
     const token = signToken(user._id);
-
     res.status(200).json({
         status: 'success',
         token: token
@@ -190,11 +190,30 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
         user.save({ validateBeforeSave: false });
         return next(new CustomError('There was an error sending password reset email. Please try again later.', 500)); // Internal server error
     }
-})
+});
 
-exports.passwordReset = async (req, res, next) => {
-
-}
+exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
+    // 1. IF THE USER EXISTS WITH THE GIVEN TOKEN & TOKEN HAS NOT EXPIRED
+    const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user = await User.findOne({ passwordResetToken: token, passwordResetTokenExpires: { $gt: Date.now() } });
+    if (!user) {
+        const error = new CustomError('Token is invalid or has expired.', 400);
+        next(error);
+    }
+    // 2. RESET THE USER PASSWORD
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+    // 3. LOGIN THE USER
+    const loginToken = signToken(user._id);
+    res.status(200).json({
+        status: 'success',
+        token: loginToken
+    })
+});
 
 
 
