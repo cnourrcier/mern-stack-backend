@@ -159,6 +159,24 @@ exports.restrict = (role) => { // Create a wrapper function that returns a middl
 //     }
 // }
 
+exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
+    // 1. GET USER BASED ON POSTED EMAIL
+    const user = await User.findOne({ email: req.body.email })
+    if (!user) {
+        const error = new CustomError('User with that email could not be found.', 404) // Not found
+        next(error);
+    }
+    // 2. GENERATE A RANDOM RESET TOKEN
+    const resetToken = user.createResetPasswordToken();
+    await user.save({ validateBeforeSave: false }); // disable pre middleware for saving, bc don't need to confirm password.
+
+    // 3. SEND EMAIL TO USER WITH RESET TOKEN
+
+})
+
+exports.passwordReset = (req, res, next) => {
+
+}
 
 
 

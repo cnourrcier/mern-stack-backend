@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 // name, email, password, confirmPassword, photo
 const userSchema = new mongoose.Schema({
@@ -39,9 +40,9 @@ const userSchema = new mongoose.Schema({
             message: 'Password & Confirm Password does not match!'
         }
     },
-    passwordChangedAt: {
-        type: Date
-    }
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date
 })
 
 // mongoose pre middleware. If password has been modified: encrypt and save. Else: next().
@@ -69,6 +70,15 @@ userSchema.methods.isPasswordChanged = async function (jwtTimestamp) {
         return jwtTimestamp < pwdChangedTimestamp;
     }
     return false;
+}
+
+// ecryption for resetPassword should not be as strong as regular password
+userSchema.methods.createResetPasswordToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex'); // 32 characters, hexadecimal string
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // sha256 is algorithm to use, digest() is format of encryption
+    this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000; // Add 10 minutes in milliseconds to current dateTime
+    console.log(resetToken, this.passwordResetToken);
+    return resetToken; // return unencrypted userToken to user, store encrypted userToken in database
 }
 
 const User = mongoose.model('User', userSchema);
