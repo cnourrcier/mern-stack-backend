@@ -22,13 +22,14 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - Mongoose: An Object Data Modeling (ODM) library for MongoDB and Node.js used for schema-based modeling and validation.
 - uuid: A library used to generate universally unique identifiers (UUIDs).
 - date-fns: A library for date and time manipulation in JavaScript.
-- dotenv: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
-- bcrypt: A library for hashing passwords. 
+- Dotenv: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+- Bcrypt: A library for hashing passwords. 
 - jsonwebtoken: A library used for secure authentication and data transmission between client and server.
 - validator: A library of string validators and sanitizers.
-- nodemailer: A module for node.js to send emails.
+- Nodemailer: A module for node.js to send emails.
 - express-rate-limit: Middleware for Express used to limit repeated requests to public APIs and/or endpoints such as password reset.
 - Helmet: Helps secure Expess apps by setting HTTP response headers.
+- Express Mongoose Sanitize: Express 4.x middleware which sanitizes user-supplied data to prevent MongoDB Operator Injection.
 
 ## Project Structure
 
@@ -111,7 +112,6 @@ New Todo Log:
 To further expand and enhance the functionality of this project, consider implementing the following features:
 
 - Sanitation methods.
-- User authentication and authorization.
 - Optimizing database quieries for better performance.
 - Implementing caching mechanisms to reduce database load.
 - Writing unit tests.

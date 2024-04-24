@@ -4,16 +4,13 @@ const todoController = require('../controllers/todoController');
 const userController = require('../controllers/userController');
 
 // Routes
-router.route('/highest-priorities')
-    .get(todoController.getHighestRated, todoController.getAllTodos)
-
 router.route('/')
     .get(userController.protect, todoController.getAllTodos)
-    .post(todoController.createTodo)
+    .post(userController.protect, todoController.createTodo)
 
 router.route('/:id')
     .get(userController.protect, todoController.getTodoById)
-    .put(todoController.updateTodo)
-    .delete(userController.protect, userController.restrict('admin'), todoController.deleteTodo)
+    .put(userController.protect, todoController.updateTodo)
+    .delete(userController.protect, todoController.deleteTodo)
 
 module.exports = router;

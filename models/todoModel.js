@@ -26,7 +26,10 @@ const todoSchema = new mongoose.Schema({
         default: 1,
         trim: true
     },
-    createdBy: String,
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     createdAt: {
         type: Date,
         default: function () {
@@ -42,16 +45,8 @@ const todoSchema = new mongoose.Schema({
     }
 });
 
-// DOCUMENT MIDDLEWARE
 
-// pre save hook
-// executed before the document is saved in db
-// .save() or .create()
-todoSchema.pre('save', function (next) {
-    // 'this' is pointing to the document that is currently being processed.
-    this.createdBy = 'CHARLIE'; // hardcoded for now
-    next();
-})
+// DOCUMENT MIDDLEWARE
 
 // post save hook
 // does not have access to 'this'

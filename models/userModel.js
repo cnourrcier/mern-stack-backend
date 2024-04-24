@@ -50,6 +50,8 @@ const userSchema = new mongoose.Schema({
     passwordResetTokenExpires: Date
 })
 
+// DOCUMENT MIDDLEWARE
+
 // mongoose pre middleware. If password has been modified: encrypt and save. Else: next().
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
@@ -73,6 +75,7 @@ userSchema.methods.comparePasswordInDb = async function (pwd, pwdDb) {
     return await bcrypt.compare(pwd, pwdDb);
 }
 
+// Check if password has changed after receiving jwt 
 userSchema.methods.isPasswordChanged = async function (jwtTimestamp) {
     if (this.passwordChangedAt) {
         // Convert datetime to timestamp in seconds, base 10.

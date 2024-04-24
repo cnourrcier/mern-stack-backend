@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const sanitize = require('express-mongo-sanitize');
 const todoRoutes = require('./routes/todoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const CustomError = require('./utils/CustomError');
@@ -19,9 +20,10 @@ process.on('uncaughtException', (err) => {
 
 const app = express();
 
+// Add security headers to the response
 app.use(helmet());
 
-// prevent brute force and denial of service attacks
+// Prevent brute force and denial of service attacks
 const limiter = rateLimit({
     max: 1000, // max number of requests
     windowMs: 60 * 60 * 1000, // timeframe: 1 hour in milliseconds
@@ -30,9 +32,9 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
+// Log all events 
 app.use(reqLogger);
 
-// Middleware
 app.use(express.json({ limit: '10kb' })); // limits req body to limit. Will truncate the rest of the data. 
 
 // console.log(app.get('env'));
