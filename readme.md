@@ -28,6 +28,7 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - validator: A library of string validators and sanitizers.
 - nodemailer: A module for node.js to send emails.
 - express-rate-limit: Middleware for Express used to limit repeated requests to public APIs and/or endpoints such as password reset.
+- Helmet: Helps secure Expess apps by setting HTTP response headers.
 
 ## Project Structure
 
