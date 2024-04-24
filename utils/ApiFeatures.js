@@ -1,3 +1,5 @@
+// ** See very bottom to view usage examples **
+
 class ApiFeatures {
     constructor(query, queryStr) {
         this.query = query;
@@ -58,3 +60,11 @@ class ApiFeatures {
 }
 
 module.exports = ApiFeatures;
+
+
+
+// Example usage: 
+// filter: <URL>/api/todos?priority[lt]=2  - filters by priorities with value = 1
+// sort: <URL>/api/todos?sort=priority     - sorts by priority in ascending order
+// limitFields: <URL>/api/todos?limit=5    - limits results to 5
+// combinedEx: <URL>/api/todos?sort=createdAt&priority[gt]=1&limit=7

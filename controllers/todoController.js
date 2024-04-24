@@ -4,9 +4,15 @@ const CustomError = require('../utils/CustomError');
 const ApiFeatures = require('../utils/ApiFeatures');
 
 
+
+// Find all the todos that the current user created. Defaults to sort by 'createdAt' field.
 exports.getAllTodos = asyncErrorHandler(async (req, res, next) => {
-    // find all the todos that the current user created
-    const todos = await Todo.find({ createdBy: req.user.id }); // req.user is passed from userController.protect
+    const features = new ApiFeatures(Todo.find({ createdBy: req.user.id }), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+    const todos = await features.query;
 
     res.status(200).json({
         status: 'success',
