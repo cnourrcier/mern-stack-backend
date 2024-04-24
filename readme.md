@@ -1,6 +1,8 @@
 # Todo Manager
 
-This project is a simple backend implementation of a RESTful API using the MERN (MongoDB, Express.js, Node.js) stack. It provides CRUD (Create, Read, Update, Delete) operations for managing todos.
+This project constitutes a backend implementation of a RESTful API built upon MongoDB, Express.js, and Node.js. It offers comprehensive CRUD (Create, Read, Update, Delete) operations for efficient management of both todos and users. The system incorporates robust user authorization and authentication mechanisms, alongside convenient password reset functionality. Additionally, it features extensive event and error logging, complemented by global error handling capabilities.
+
+Moreover, users benefit from advanced todo management functionalities, including the ability to sort, filter, and limit their todos based on various criteria such as priority level, creation date, and more. This ensures a streamlined and customizable experience tailored to individual user preferences.
 
 ## Table of Contents
 
@@ -36,8 +38,8 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 
 The project follows a standard MVC (Model-View-Controller) pattern for organizing code:
 
-- **models/**: Contains the MongoDB schema definitions for todos.
 - **controllers/**: Contains the logic for handling todo-related CRUD operations.
+- **models/**: Contains the MongoDB schema definitions for todos.
 - **routes/**: Contains the route definitions for todo API endpoints.
 - **utils/**: Contains various utility classes and functions.
 - **index.js**: The entry point of the application where the Express server is initialized and configured.
@@ -73,25 +75,24 @@ npm run dev
 
 ## API Endpoints
 
-### Todos
-- **GET /api/todos**: Retrieve all todos created by user.
-- **GET /api/todos/:id**: Retrieve a todo by ID.
-- **POST /api/todos**: Create a new todo.
-- **PUT /api/todos/:id**: Update a todo.
-- **DELETE /api/todos/:id**: Delete a todo by ID.
-
-### Users
-- **GET /api/users**: Retrieve all users (admin only route).
-- **GET /api/users/:id**: Retrieve a user by ID (admin only route).
-- **POST /api/users/signup**: Create an account.
-- **POST /api/users/login**: Login a registered user.
-- **PUT /api/users/:id**: Update a registered user.
-- **DELETE /api/users/:id**: Permanently delete a user by ID (admin only route).
-- **POST /forgotPassword**: Generate and send email to user with link to reset password.
-- **PATCH /resetPassword/:token**: User can use link from email to reset password.
-- **PATCH /updatePassword**: User can update password if desired.
-- **PATCH /updateMe**: User can update name and email fields.
-- **PATCH /deleteMe**: User can to soft delete (deactivate) account.
+| Resource            | Method | Endpoint                     | Description                                        |
+|---------------------|--------|------------------------------|----------------------------------------------------|
+| Todos               | GET    | /api/todos                   | Retrieve all todos created by user.                |
+|                     | GET    | /api/todos/:id               | Retrieve a todo by ID.                             |
+|                     | POST   | /api/todos                   | Create a new todo.                                 |
+|                     | PUT    | /api/todos/:id               | Update a todo.                                     |
+|                     | DELETE | /api/todos/:id               | Delete a todo by ID.                               |
+| Users               | GET    | /api/users                   | Retrieve all users (admin only route).             |
+|                     | GET    | /api/users/:id               | Retrieve a user by ID (admin only route).          |
+|                     | POST   | /api/users/signup            | Create an account.                                 |
+|                     | POST   | /api/users/login             | Login a registered user.                           |
+|                     | PUT    | /api/users/:id               | Update a registered user.                          |
+|                     | DELETE | /api/users/:id               | Permanently delete a user by ID (admin only route).|
+|                     | POST   | /forgotPassword              | Generate and send email to user with link to reset password. |
+|                     | PATCH  | /resetPassword/:token        | User can use link from email to reset password.   |
+|                     | PATCH  | /updatePassword              | User can update password if desired.              |
+|                     | PATCH  | /updateMe                    | User can update name and email fields.            |
+|                     | PATCH  | /deleteMe                    | User can to soft delete (deactivate) account.     |
 
 ## Logging
 
@@ -112,11 +113,10 @@ New Todo Log:
 - Date and time of request
 - Title of newly created todo
 - ID of registered user who created the todo
- 
-## Next Steps
 
-This is an ongoing project. Please feel free to give suggestions for improvements, or to further expand and enhance the functionality of this project. Also feel free to clone this project and add more features yourself.
+## Contributing
 
+If you'd like to contribute, please fork the repository and create a pull request. You can also open an issue to report bugs or suggest new features.
 
 ## License
 
