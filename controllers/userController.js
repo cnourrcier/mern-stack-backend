@@ -16,6 +16,15 @@ const signToken = (id) => {
 
 const createSendResponse = (user, statusCode, res) => {
     const token = signToken(user._id);
+    const options = {
+        expiresIn: process.env.LOGIN_EXPIRES,
+        httpOnly: true // restrict browers from accessing or modifying the cookie, to prevent cross site scripting attack.
+    }
+    if (process.env.NODE_ENV === 'production') {
+        options.secure = true; // will only be sent on https
+    }
+    res.cookie('jwt', token, options);
+    user.password = undefined; // password is already saved in db. Set to undefined before sending to client.
     res.status(statusCode).json({
         status: 'success',
         token,
