@@ -88,11 +88,11 @@ npm run dev
 |                     | POST   | /api/users/login             | Login a registered user.                           |
 |                     | PUT    | /api/users/:id               | Update a registered user.                          |
 |                     | DELETE | /api/users/:id               | Permanently delete a user by ID (admin only route).|
-|                     | POST   | /forgotPassword              | Generate and send email to user with link to reset password. |
-|                     | PATCH  | /resetPassword/:token        | User can use link from email to reset password.   |
-|                     | PATCH  | /updatePassword              | User can update password if desired.              |
-|                     | PATCH  | /updateMe                    | User can update name and email fields.            |
-|                     | PATCH  | /deleteMe                    | User can to soft delete (deactivate) account.     |
+|                     | POST   | api/users/forgotPassword              | Generate and send email to user with link to reset password. |
+|                     | PATCH  | api/users/resetPassword/:token        | User can use link from email to reset password.   |
+|                     | PATCH  | api/users/updatePassword              | User can update password if desired.              |
+|                     | PATCH  | api/users/updateMe                    | User can update name and email fields.            |
+|                     | PATCH  | api/users/deleteMe                    | User can to soft delete (deactivate) account.     |
 
 ## Logging
 
