@@ -27,6 +27,7 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - jsonwebtoken: A library used for secure authentication and data transmission between client and server.
 - validator: A library of string validators and sanitizers.
 - nodemailer: A module for node.js to send emails.
+- express-rate-limit: Middleware for Express used to limit repeated requests to public APIs and/or endpoints such as password reset.
 
 ## Project Structure
 

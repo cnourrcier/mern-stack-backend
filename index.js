@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
 const todoRoutes = require('./routes/todoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const CustomError = require('./utils/CustomError');
@@ -16,6 +17,15 @@ process.on('uncaughtException', (err) => {
 })
 
 const app = express();
+
+// prevent brute force and denial of service attacks
+const limiter = rateLimit({
+    max: 1000, // max number of requests
+    windowMs: 60 * 60 * 1000, // timeframe: 1 hour in milliseconds
+    message: 'We have received too many requests from this IP. Please try after one hour.'
+});
+
+app.use('/api', limiter);
 
 app.use(reqLogger);
 
