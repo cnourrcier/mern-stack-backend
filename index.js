@@ -4,6 +4,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const sanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 const todoRoutes = require('./routes/todoRoutes');
 const userRoutes = require('./routes/userRoutes');
 const CustomError = require('./utils/CustomError');
@@ -11,6 +12,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const { reqLogger } = require('./utils/eventLogger');
 const dotenv = require('dotenv');
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 process.on('uncaughtException', (err) => {
     console.log(err.name, err.message);
@@ -45,8 +47,8 @@ app.use(sanitize());
 // Prevents xss injections
 app.use(xss());
 
-// console.log(app.get('env'));
-// console.log(process.env);
+// Prevents parameter pollution
+app.use(hpp({ whitelist: ['priority'] }));
 
 // Routes
 app.use('/api/todos', todoRoutes);
@@ -57,6 +59,7 @@ app.all('*', (req, res, next) => {
     next(error);
 });
 
+// Get all errors
 app.use(globalErrorHandler);
 
 // Connect to MongoDB
@@ -67,16 +70,12 @@ mongoose.connect(process.env.CONN_STR)
     })
 
 // Start server
-const PORT = process.env.PORT || 3000;
-
 const server = app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
 
-
-// each time there is an unhandled rejection anywhere in the NodeJS app,
-// the process object will emit an error event called unhandledRejection.
-//This process.on will emit an event called unhandledRejection. It will 
+// Each time there is an unhandled rejection anywhere in the NodeJS app,
+// this process obj, process.on, will emit an event called unhandledRejection. It will 
 // receive an event object which is an err, a rejected promise, and will 
-// execute a callback function.
+// execute the callback function.
 process.on('unhandledRejection', (err) => {
     console.log(err.name, err.message);
     console.log('Unhandled rejection has occured! Shutting down...');

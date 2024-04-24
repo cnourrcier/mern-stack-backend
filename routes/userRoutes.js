@@ -14,8 +14,7 @@ router.route('/login')
 
 router.route('/:id')
     .get(userController.protect, userController.restrict('admin'), userController.getUserById)
-    .put(userController.updateUser)
-    .delete(userController.deleteUser)
+    .delete(userController.protect, userController.restrict('admin'), userController.deleteUser)
 
 router.route('/forgotPassword')
     .post(userController.forgotPassword)

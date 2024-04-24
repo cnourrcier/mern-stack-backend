@@ -1,7 +1,6 @@
 const User = require('../models/userModel');
 const asyncErrorHandler = require('../utils/asyncErrorHandler');
 const CustomError = require('../utils/CustomError');
-const ApiFeatures = require('../utils/ApiFeatures');
 const jwt = require('jsonwebtoken');
 const util = require('util');
 const crypto = require('crypto');
@@ -23,11 +22,11 @@ const createSendResponse = (user, statusCode, res) => {
     if (process.env.NODE_ENV === 'production') {
         options.secure = true; // will only be sent on https
     }
+    // pass jwt in http cookie
     res.cookie('jwt', token, options);
     user.password = undefined; // password is already saved in db. Set to undefined before sending to client.
     res.status(statusCode).json({
         status: 'success',
-        token,
         data: {
             user
         }
@@ -93,20 +92,8 @@ exports.getUserById = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
-exports.updateUser = asyncErrorHandler(async (req, res, next) => {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-    if (!updatedUser) {
-        const error = new CustomError('User with that ID is not found', 404);
-        return next(error);
-    };
-    res.status(200).json({
-        status: 'success',
-        data: {
-            updatedUser
-        }
-    });
-});
 
+// Permanent delete
 exports.deleteUser = async (req, res, next) => {
     // will return a deleted user object if successfully deleted. If ID is not found, will return null.
     const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -121,7 +108,7 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.protect = asyncErrorHandler(async (req, res, next) => {
-    // 1. Read the token and check if it exists.
+    // Read the token and check if it exists.
     const testToken = req.headers.authorization;
     let token;
     if (testToken && testToken.startsWith('Bearer')) {
@@ -130,21 +117,21 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     if (!token) {
         next(new CustomError('You are not logged in!', 401)); // Unauthorized.
     };
-    // 2. Validate the token.
+    // Validate the token.
     // Async function, but does not return a promise. 
     // Need to promisify it so that it returns a promise.
     const decodedToken = await util.promisify(jwt.verify)(token, process.env.SECRET_STR);
-    // 3. Check if the user exists in the database.
+    // Check if the user exists in the database.
     const user = await User.findById(decodedToken.id);
     if (!user) {
         next(new CustomError('The user with the given token does not exist.', 401)); // Unauthorized
     };
-    // 4. Check if the user changed password after the token was issued.
+    // Check if the user changed password after the token was issued.
     const isPasswordChanged = await user.isPasswordChanged(decodedToken.iat);
     if (isPasswordChanged) {
         return next(new CustomError('The password has been changed. Please login again.', 401));
     };
-    // 5. Allow user to access route.
+    // Pass user obj to req.user and allow user to access route.
     req.user = user;
     next();
 });
@@ -172,19 +159,19 @@ exports.restrict = (role) => { // Create a wrapper function that returns a middl
 // }
 
 exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
-    // 1. GET USER BASED ON POSTED EMAIL
+    // Get user based on posted email
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
         const error = new CustomError('User with that email could not be found.', 404); // Not found
         next(error);
     };
-    // 2. GENERATE A RANDOM RESET TOKEN
+    // Generate a random reset token
     const resetToken = user.createResetPasswordToken();
     await user.save({ validateBeforeSave: false }); // disable pre middleware for saving, bc don't need to confirm password.
-    // 3. SEND EMAIL TO USER WITH RESET TOKEN
+    // Send email to user with reset token
     const resetUrl = `${req.protocol}://${req.get('host')}/api/users/resetPassword/${resetToken}`; // protocol is either http or https. req.get('host') will return the host (ex: localhost:3000)
     const message = `We have received a password reset request. Please use the below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will only be valid for 10 minutes.`;
-    // if receive a rejected promise, send to global error handler after removing values from passwordResetToken and pRTE in database.
+    // if receive a rejected promise, send to global error handler AFTER removing values from passwordResetToken and pRTE in database.
     try {
         await sendEmail({
             email: user.email,
@@ -204,45 +191,45 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
-    // 1. IF THE USER EXISTS WITH THE GIVEN TOKEN & TOKEN HAS NOT EXPIRED
+    // If the user exists with the given token & token has not expired 
     const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
     const user = await User.findOne({ passwordResetToken: token, passwordResetTokenExpires: { $gt: Date.now() } });
     if (!user) {
         const error = new CustomError('Token is invalid or has expired.', 400);
         next(error);
     };
-    // 2. RESET THE USER PASSWORD
+    // Reset the user password
     user.password = req.body.password;
     user.confirmPassword = req.body.confirmPassword;
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
     user.passwordChangedAt = Date.now();
     await user.save();
-    // 3. LOGIN THE USER
+    // Login the user
     createSendResponse(user, 200, res);
 });
 
 exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
-    // 1. GET CURRENT USER DATA FROM DATABASE
+    // Get current user data from database
     const user = await User.findById(req.user._id).select('+password'); // we get req.user from protect middleware that runs before this function.
-    // 2. CHECK IF THE SUPPLIED CURRENT PASSWORD IS CORRECT
+    // Check if the supplied current password is correct
     if (!(await user.comparePasswordInDb(req.body.currentPassword, user.password))) {
         return next(new CustomError('Password is incorrect.', 401)) // Bad request
     };
-    // 3. IF SUPPLIED PASSWORD IS CORRECT, UPDATE USER PASSWORD WITH NEW VALUE
+    // If supplied password is correct, update user password with new value
     user.password = req.body.password;
     user.confirmPassword = req.body.confirmPassword;
     await user.save();
-    // 4. LOGIN USER & SEND JWT
+    // Login user & send jwt
     createSendResponse(user, 200, res);
 });
 
 exports.updateMe = asyncErrorHandler(async (req, res, next) => {
-    // 1. CHECK IF REQUEST DATA CONTAINS PASSWORD OR CONFIRMPASSWORD
+    // Check if request data contains password or confirmPassword
     if (req.body.password || req.body.confirmPassword) {
         return next(new CustomError('You cannot update your password using this endpoint.', 400)) // Bad request
     };
-    // 2. UPDATE USER DETAILS
+    // Update user details
     const filterObj = filterReqObj(req.body, 'name', 'email');
     console.log(typeof req.user.id);
     const updatedUser = await User.findByIdAndUpdate(req.user.id, filterObj, { runValidators: true, new: true }); // protect middleware will be run first and will past the req.user obj.
@@ -254,6 +241,7 @@ exports.updateMe = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
+// Soft delete
 exports.deleteMe = asyncErrorHandler(async (req, res, next) => {
     await User.findByIdAndUpdate(req.user.id, { isActive: false }); // protect middleware will be run first and will past the req.user obj.
     res.status(204).json({ // Deleted (soft delete)

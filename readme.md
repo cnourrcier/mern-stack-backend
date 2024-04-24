@@ -1,4 +1,4 @@
-# Task Manager
+# Todo Manager
 
 This project is a simple backend implementation of a RESTful API using the MERN (MongoDB, Express.js, Node.js) stack. It provides CRUD (Create, Read, Update, Delete) operations for managing todos.
 
@@ -30,6 +30,7 @@ This project is a simple backend implementation of a RESTful API using the MERN 
 - express-rate-limit: Middleware for Express used to limit repeated requests to public APIs and/or endpoints such as password reset.
 - Helmet: Helps secure Expess apps by setting HTTP response headers.
 - Express Mongoose Sanitize: Express 4.x middleware which sanitizes user-supplied data to prevent MongoDB Operator Injection.
+- hpp: Protect against HTTP parameter pollution attacks.
 
 ## Project Structure
 
@@ -38,6 +39,7 @@ The project follows a standard MVC (Model-View-Controller) pattern for organizin
 - **models/**: Contains the MongoDB schema definitions for todos.
 - **controllers/**: Contains the logic for handling todo-related CRUD operations.
 - **routes/**: Contains the route definitions for todo API endpoints.
+- **utils/**: Contains various utility classes and functions.
 - **index.js**: The entry point of the application where the Express server is initialized and configured.
 
 ## Installation
@@ -45,13 +47,13 @@ The project follows a standard MVC (Model-View-Controller) pattern for organizin
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/cnourrcier/mern-stack-backend.git
+git clone https://github.com/cnourrcier/todo-manager.git
 ```
 
 2. Install dependencies:
 
 ```bash
-cd mern-stack-backend
+cd todo-manager
 npm install
 ```
 
@@ -72,20 +74,24 @@ npm run dev
 ## API Endpoints
 
 ### Todos
-- **GET /api/todos/highest-priorities**: Retrieve 5 highest priority todos.
-- **GET /api/todos**: Retrieve all todos.
+- **GET /api/todos**: Retrieve all todos created by user.
 - **GET /api/todos/:id**: Retrieve a todo by ID.
 - **POST /api/todos**: Create a new todo.
 - **PUT /api/todos/:id**: Update a todo.
 - **DELETE /api/todos/:id**: Delete a todo by ID.
 
 ### Users
-- **GET /api/users**: Retrieve all users.
-- **GET /api/users/:id**: Retrieve a user by ID.
-- **POST /api/todos/signup**: Create a new user.
-- **POST /api/todos/login**: Login a registered user.
-- **PUT /api/todos/:id**: Update a registered user.
-- **DELETE /api/todos/:id**: Delete a user by ID.
+- **GET /api/users**: Retrieve all users (admin only route).
+- **GET /api/users/:id**: Retrieve a user by ID (admin only route).
+- **POST /api/users/signup**: Create an account.
+- **POST /api/users/login**: Login a registered user.
+- **PUT /api/users/:id**: Update a registered user.
+- **DELETE /api/users/:id**: Permanently delete a user by ID (admin only route).
+- **POST /forgotPassword**: Generate and send email to user with link to reset password.
+- **PATCH /resetPassword/:token**: User can use link from email to reset password.
+- **PATCH /updatePassword**: User can update password if desired.
+- **PATCH /updateMe**: User can update name and email fields.
+- **PATCH /deleteMe**: User can to soft delete (deactivate) account.
 
 ## Logging
 
@@ -105,16 +111,12 @@ Error Log:
 New Todo Log:
 - Date and time of request
 - Title of newly created todo
-- Name of registered user who created the todo
+- ID of registered user who created the todo
  
 ## Next Steps
 
-To further expand and enhance the functionality of this project, consider implementing the following features:
+This is an ongoing project. Please feel free to give suggestions for improvements, or to further expand and enhance the functionality of this project. Also feel free to clone this project and add more features yourself.
 
-- Sanitation methods.
-- Optimizing database quieries for better performance.
-- Implementing caching mechanisms to reduce database load.
-- Writing unit tests.
 
 ## License
 

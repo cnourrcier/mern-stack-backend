@@ -64,7 +64,9 @@ module.exports = ApiFeatures;
 
 
 // Example usage: 
-// filter: <URL>/api/todos?priority[lt]=2  - filters by priorities with value = 1
-// sort: <URL>/api/todos?sort=priority     - sorts by priority in ascending order
-// limitFields: <URL>/api/todos?limit=5    - limits results to 5
+// filter: <URL>/api/todos?priority[lt]=2    - filters by priorities with value = 1
+// sort: <URL>/api/todos?sort=priority       - sorts by priority in ascending order
+// limitFields: <URL>/api/todos?limit=5      - limits results to 5
+
 // combinedEx: <URL>/api/todos?sort=createdAt&priority[gt]=1&limit=7
+// combinedEx2: <URL>/api/todos?sort=priority&priority=1&priority=2  - sorts by priority and filters results to priorities 1 and 2
