@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const sanitize = require('express-mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const todoRoutes = require('./routes/todoRoutes');
@@ -38,11 +39,13 @@ app.use('/api', limiter);
 // Log all events 
 app.use(reqLogger);
 
+app.use(cors());
+
 // Read json formatted req data 
 app.use(express.json({ limit: '10kb' })); // limits req body to limit. Will truncate the rest of the data. 
 
 // Removes any noSQL query in req.body, req.query, or req.param (aka '$', '.')
-app.use(sanitize());
+app.use(mongoSanitize());
 
 // Prevents xss injections
 app.use(xss());

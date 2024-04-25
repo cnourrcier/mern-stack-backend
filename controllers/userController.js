@@ -27,6 +27,8 @@ const createSendResponse = (user, statusCode, res) => {
     user.password = undefined; // password is already saved in db. Set to undefined before sending to client.
     res.status(statusCode).json({
         status: 'success',
+        message: 'Success!',
+        token,
         data: {
             user
         }

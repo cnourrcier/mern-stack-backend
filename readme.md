@@ -1,4 +1,4 @@
-# Todo Manager
+# Todo Manager Back End
 
 This project constitutes a backend implementation of a RESTful API built upon MongoDB, Express.js, and Node.js. It offers comprehensive CRUD (Create, Read, Update, Delete) operations for efficient management of both todos and users. The system incorporates robust user authorization and authentication mechanisms, alongside convenient password reset functionality. Additionally, it features extensive event and error logging, complemented by global error handling capabilities.
 
@@ -33,6 +33,7 @@ Moreover, users benefit from advanced todo management functionalities, including
 - Helmet: Helps secure Expess apps by setting HTTP response headers.
 - Express Mongoose Sanitize: Express 4.x middleware which sanitizes user-supplied data to prevent MongoDB Operator Injection.
 - hpp: Protect against HTTP parameter pollution attacks.
+- CORS: A node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options. 
 
 ## Project Structure
 
